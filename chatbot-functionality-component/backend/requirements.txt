@@ -1,0 +1,14 @@
+Flask==2.0.1
+flask-sqlalchemy==3.0.3
+flask-cors==4.0.0
+pytest==7.0.1
+python-dotenv==0.19.0
+psycopg2-binary==2.9.1
+PyPDF2==3.0.1
+transformers==4.30.2
+torch==2.0.1
+numpy==1.24.3
+boto3==1.28.3
+python-magic==0.4.27
+sentence-transformers==2.2.2
+faiss-cpu==1.7.4

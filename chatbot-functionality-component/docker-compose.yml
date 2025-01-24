@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app
+      - FLASK_ENV=development
+      - RAG_SERVICE_URL=http://rag-service:8000
+      - RAG_SERVICE_API_KEY=${RAG_SERVICE_API_KEY}
+      - PDF_STORAGE_BUCKET=${PDF_STORAGE_BUCKET}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=chatbot
+    volumes:
+      - ./backend:/app
+      - pdf_storage:/app/storage/pdfs
+    networks:
+      - chatbot-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+      - REACT_APP_MAX_FILE_SIZE=10485760
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    networks:
+      - chatbot-network
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=chatbot
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - chatbot-network
+
+  rag-service:
+    image: ${RAG_SERVICE_IMAGE}
+    environment:
+      - API_KEY=${RAG_SERVICE_API_KEY}
+      - MODEL_NAME=${RAG_MODEL_NAME}
+    ports:
+      - "8000:8000"
+    networks:
+      - chatbot-network
+
+volumes:
+  postgres_data:
+  pdf_storage:
+
+networks:
+  chatbot-network:
+    driver: bridge
