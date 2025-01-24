@@ -1,0 +1,4 @@
+{
+    "command": "cd frontend && npm install && npm run build",
+    "working_directory": "/home/kavia/workspace/chatbot-rag-pdf-i02-chatbot-application-container-27861-28062-pre_prod/chatbot-functionality-component"
+}
